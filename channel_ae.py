@@ -10,6 +10,7 @@ from ste import STEQuantize as MyQuantize
 class Channel_AE(torch.nn.Module):
     def __init__(self, args, enc, dec):
         super(Channel_AE, self).__init__()
+    
         use_cuda = not args.no_cuda and torch.cuda.is_available()
         self.this_device = torch.device("cuda" if use_cuda else "cpu")
 
@@ -61,7 +62,7 @@ class Channel_AE(torch.nn.Module):
             # # corrupted_signal = 2.0*fading_h*input_signal-1.0 + noise
             # corrupted_signal = fading_h *(2.0*input_signal-1.0) + noise
         else:
-            print('default AWGN channel')
+            print('default AWGN and ITS channel')
             received_codes = codes + fwd_noise
 
         if self.args.rec_quantize:
@@ -77,6 +78,7 @@ class Channel_AE(torch.nn.Module):
 class Channel_ModAE(torch.nn.Module):
     def __init__(self, args, enc, dec, mod, demod, modulation = 'qpsk'):
         super(Channel_ModAE, self).__init__()
+
         use_cuda = not args.no_cuda and torch.cuda.is_available()
         self.this_device = torch.device("cuda" if use_cuda else "cpu")
 
@@ -115,7 +117,7 @@ class Channel_ModAE(torch.nn.Module):
             print('Fading not implemented')
 
         else:
-            print('default AWGN channel')
+            print('default AWGN and ITS channel')
             received_symbols = symbols + fwd_noise
 
         if self.args.rec_quantize:
@@ -126,3 +128,6 @@ class Channel_ModAE(torch.nn.Module):
         x_dec = self.dec(x_rec)
 
         return x_dec, symbols
+
+
+# 但都没有考虑冲击响应，类似于信道已知

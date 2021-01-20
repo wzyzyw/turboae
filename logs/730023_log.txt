@@ -1,0 +1,449 @@
+Namespace(batch_size=500, bce_lambda=1.0, bec_p=0.0, bec_p_dec=0.0, ber_lambda=1.0, block_len=100, block_len_high=200, block_len_low=10, bsc_p=0.0, bsc_p_dec=0.0, channel='awgn', code_rate_k=1, code_rate_n=3, dec_act='linear', dec_kernel_size=5, dec_lr=0.0001, dec_num_layer=5, dec_num_unit=100, dec_rnn='gru', decoder='TurboAE_rate3_cnn', demod_lr=0.005, demod_num_layer=1, demod_num_unit=20, dropout=0.0, enc_act='elu', enc_clipping='both', enc_grad_limit=0.01, enc_kernel_size=5, enc_lr=0.0001, enc_num_layer=2, enc_num_unit=100, enc_quantize_level=2, enc_rnn='gru', enc_truncate_limit=0, enc_value_limit=1.0, encoder='TurboAE_rate3_cnn', extrinsic=1, focal_alpha=1.0, focal_gamma=0.0, img_size=10, init_nw_weight='default', is_interleave=1, is_k_same_code=False, is_parallel=1, is_same_interleaver=1, is_variable_block_len=False, joint_train=0, k_same_code=2, lambda_maxBCE=0.01, loss='bce', mod_lr=0.005, mod_num_layer=1, mod_num_unit=20, mod_pc='block_power', mod_rate=2, momentum=0.9, no_code_norm=False, no_cuda=False, num_ber_puncture=5, num_block=50000, num_epoch=100, num_iter_ft=5, num_iteration=6, num_train_dec=5, num_train_demod=5, num_train_enc=1, num_train_mod=1, optimizer='adam', precompute_norm_stats=False, print_pos_ber=False, print_pos_power=False, print_test_traj=True, radar_power=5.0, radar_prob=0.05, rec_quantize=False, rec_quantize_level=2, rec_quantize_limit=1.0, snr_points=12, snr_test_end=4.0, snr_test_start=-1.5, test_channel_mode='block_norm', test_ratio=1, train_channel_mode='block_norm', train_dec_channel_high=30.0, train_dec_channel_low=-10.0, train_enc_channel_high=0.0, train_enc_channel_low=0.0, vv=5)
+using random interleaver [26 86  2 55 75 93 16 73 54 95 53 92 78 13  7 30 22 24 33  8 43 62  3 71
+ 45 48  6 99 82 76 60 80 90 68 51 27 18 56 63 74  1 61 42 41  4 15 17 40
+ 38  5 91 59  0 34 28 50 11 35 23 52 10 31 66 57 79 85 32 84 14 89 19 29
+ 49 97 98 69 20 94 72 77 25 37 81 46 39 65 58 12 88 70 87 36 21 83  9 96
+ 67 64 47 44] [18 29 64 92 72 87  5 15 12 17 61 76  9 78 80  7 33  6 37 74 79  1 45 28
+ 60 52 25 39 97 44 16 55 83 49 22 70 47  4 82 94 53 66 26 84 31 63  8 75
+ 98 57 71 99 86 96 69 24 30 13 40 56 68 95 81 19 38 91 54 32 51 85 11 89
+ 90 36 65 88 41 14 27 50 20 46 67 35 62  2 59 23 58 43 10  0 73 21 77 42
+  3 93 48 34]
+Channel_ModAE(
+  (enc): ENC_interCNN(
+    (enc_cnn_1): DataParallel(
+      (module): SameShapeConv1d(
+        (cnns): ModuleList(
+          (0): Conv1d(1, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+          (1): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+        )
+      )
+    )
+    (enc_cnn_2): DataParallel(
+      (module): SameShapeConv1d(
+        (cnns): ModuleList(
+          (0): Conv1d(1, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+          (1): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+        )
+      )
+    )
+    (enc_cnn_3): DataParallel(
+      (module): SameShapeConv1d(
+        (cnns): ModuleList(
+          (0): Conv1d(1, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+          (1): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+        )
+      )
+    )
+    (enc_linear_1): DataParallel(
+      (module): Linear(in_features=100, out_features=1, bias=True)
+    )
+    (enc_linear_2): DataParallel(
+      (module): Linear(in_features=100, out_features=1, bias=True)
+    )
+    (enc_linear_3): DataParallel(
+      (module): Linear(in_features=100, out_features=1, bias=True)
+    )
+    (interleaver): Interleaver()
+  )
+  (dec): DEC_LargeCNN(
+    (interleaver): Interleaver()
+    (deinterleaver): DeInterleaver()
+    (dec1_cnns): ModuleList(
+      (0): DataParallel(
+        (module): SameShapeConv1d(
+          (cnns): ModuleList(
+            (0): Conv1d(7, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (1): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (2): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (3): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (4): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+          )
+        )
+      )
+      (1): DataParallel(
+        (module): SameShapeConv1d(
+          (cnns): ModuleList(
+            (0): Conv1d(7, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (1): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (2): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (3): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (4): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+          )
+        )
+      )
+      (2): DataParallel(
+        (module): SameShapeConv1d(
+          (cnns): ModuleList(
+            (0): Conv1d(7, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (1): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (2): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (3): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (4): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+          )
+        )
+      )
+      (3): DataParallel(
+        (module): SameShapeConv1d(
+          (cnns): ModuleList(
+            (0): Conv1d(7, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (1): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (2): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (3): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (4): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+          )
+        )
+      )
+      (4): DataParallel(
+        (module): SameShapeConv1d(
+          (cnns): ModuleList(
+            (0): Conv1d(7, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (1): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (2): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (3): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (4): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+          )
+        )
+      )
+      (5): DataParallel(
+        (module): SameShapeConv1d(
+          (cnns): ModuleList(
+            (0): Conv1d(7, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (1): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (2): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (3): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (4): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+          )
+        )
+      )
+    )
+    (dec2_cnns): ModuleList(
+      (0): DataParallel(
+        (module): SameShapeConv1d(
+          (cnns): ModuleList(
+            (0): Conv1d(7, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (1): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (2): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (3): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (4): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+          )
+        )
+      )
+      (1): DataParallel(
+        (module): SameShapeConv1d(
+          (cnns): ModuleList(
+            (0): Conv1d(7, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (1): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (2): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (3): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (4): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+          )
+        )
+      )
+      (2): DataParallel(
+        (module): SameShapeConv1d(
+          (cnns): ModuleList(
+            (0): Conv1d(7, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (1): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (2): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (3): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (4): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+          )
+        )
+      )
+      (3): DataParallel(
+        (module): SameShapeConv1d(
+          (cnns): ModuleList(
+            (0): Conv1d(7, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (1): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (2): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (3): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (4): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+          )
+        )
+      )
+      (4): DataParallel(
+        (module): SameShapeConv1d(
+          (cnns): ModuleList(
+            (0): Conv1d(7, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (1): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (2): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (3): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (4): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+          )
+        )
+      )
+      (5): DataParallel(
+        (module): SameShapeConv1d(
+          (cnns): ModuleList(
+            (0): Conv1d(7, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (1): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (2): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (3): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+            (4): Conv1d(100, 100, kernel_size=(5,), stride=(1,), padding=(2,))
+          )
+        )
+      )
+    )
+    (dec1_outputs): ModuleList(
+      (0): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (1): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (2): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (3): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (4): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (5): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+    )
+    (dec2_outputs): ModuleList(
+      (0): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (1): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (2): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (3): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (4): DataParallel(
+        (module): Linear(in_features=100, out_features=5, bias=True)
+      )
+      (5): DataParallel(
+        (module): Linear(in_features=100, out_features=1, bias=True)
+      )
+    )
+  )
+  (mod): Modulation(
+    (mod_layer): SameShapeConv1d(
+      (cnns): ModuleList(
+        (0): Conv1d(2, 20, kernel_size=(1,), stride=(1,))
+      )
+    )
+    (mod_final): SameShapeConv1d(
+      (cnns): ModuleList(
+        (0): Conv1d(20, 2, kernel_size=(1,), stride=(1,))
+      )
+    )
+  )
+  (demod): DeModulation(
+    (demod_layer): SameShapeConv1d(
+      (cnns): ModuleList(
+        (0): Conv1d(2, 20, kernel_size=(1,), stride=(1,))
+      )
+    )
+    (demod_final): SameShapeConv1d(
+      (cnns): ModuleList(
+        (0): Conv1d(20, 2, kernel_size=(1,), stride=(1,))
+      )
+    )
+  )
+)
+====> Epoch: 1 Average loss: 0.69203347  running time 3284.7134115695953
+====> Epoch: 1 Average loss: 0.61706025  running time 4052.161552667618
+====> Epoch: 1 Average loss: 0.57445666  running time 4050.0527856349945
+====> Epoch: 1 Average loss: 0.56937160  running time 4082.291195631027
+====> Epoch: 1 Average loss: 0.56770092  running time 4075.4231522083282
+====> Epoch: 1 Average loss: 0.56604124  running time 2639.4061636924744
+====> Epoch: 1 Average loss: 0.51651174  running time 1789.8308804035187
+====> Epoch: 1 Average loss: 0.48971464  running time 1809.823362827301
+====> Epoch: 1 Average loss: 0.48424787  running time 1811.4754114151
+====> Epoch: 1 Average loss: 0.48138144  running time 1810.0502307415009
+====> Epoch: 1 Average loss: 0.47957528  running time 1622.1254947185516
+====> Epoch: 1 Average loss: 0.47871615  running time 1626.9896926879883
+====> Test set BCE loss 0.4084389805793762 Custom Loss 0.4084389805793762 with ber  0.17485816776752472
+====> Epoch: 2 Average loss: 0.38747879  running time 1622.0655300617218
+====> Epoch: 2 Average loss: 0.41973149  running time 1624.011491060257
+====> Epoch: 2 Average loss: 0.41141496  running time 1624.1013565063477
+====> Epoch: 2 Average loss: 0.40914362  running time 1621.187035560608
+====> Epoch: 2 Average loss: 0.40791691  running time 1618.4446156024933
+====> Epoch: 2 Average loss: 0.40670880  running time 1620.7482883930206
+====> Epoch: 2 Average loss: 0.39822325  running time 1619.2361598014832
+====> Epoch: 2 Average loss: 0.39411157  running time 1620.4194777011871
+====> Epoch: 2 Average loss: 0.39320590  running time 1617.4012167453766
+====> Epoch: 2 Average loss: 0.39247752  running time 1620.4774451255798
+====> Epoch: 2 Average loss: 0.39235356  running time 1616.128219127655
+====> Epoch: 2 Average loss: 0.39223318  running time 1620.277559041977
+====> Test set BCE loss 0.2775252163410187 Custom Loss 0.2775252163410187 with ber  0.10554176568984985
+====> Epoch: 3 Average loss: 0.26561594  running time 1617.1253759860992
+====> Epoch: 3 Average loss: 0.37160898  running time 1626.363053560257
+====> Epoch: 3 Average loss: 0.36987498  running time 1619.6825952529907
+====> Epoch: 3 Average loss: 0.36971763  running time 1621.945599079132
+====> Epoch: 3 Average loss: 0.36962074  running time 1618.9313352108002
+====> Epoch: 3 Average loss: 0.36868870  running time 1620.377501964569
+====> Epoch: 3 Average loss: 0.36446003  running time 1618.1632912158966
+====> Epoch: 3 Average loss: 0.36201239  running time 1616.19491147995
+====> Epoch: 3 Average loss: 0.36137870  running time 1618.0768265724182
+====> Epoch: 3 Average loss: 0.36088027  running time 1615.5572791099548
+====> Epoch: 3 Average loss: 0.36064368  running time 1619.472023010254
+====> Epoch: 3 Average loss: 0.36108251  running time 1617.9563074111938
+====> Test set BCE loss 0.23832416534423828 Custom Loss 0.23832416534423828 with ber  0.08786701411008835
+====> Epoch: 4 Average loss: 0.23414301  running time 1617.2782878875732
+====> Epoch: 4 Average loss: 0.35302101  running time 1619.235160112381
+====> Epoch: 4 Average loss: 0.35189931  running time 1629.1924238204956
+====> Epoch: 4 Average loss: 0.35176801  running time 1633.243090391159
+====> Epoch: 4 Average loss: 0.35160436  running time 1904.8401544094086
+====> Epoch: 4 Average loss: 0.35099697  running time 1718.9566550254822
+====> Epoch: 4 Average loss: 0.34663159  running time 1732.449586391449
+====> Epoch: 4 Average loss: 0.34169570  running time 1706.9989109039307
+====> Epoch: 4 Average loss: 0.34146006  running time 1747.9454095363617
+====> Epoch: 4 Average loss: 0.34148767  running time 1969.6785600185394
+====> Epoch: 4 Average loss: 0.34130922  running time 1797.5584044456482
+====> Epoch: 4 Average loss: 0.34106468  running time 1640.6175899505615
+====> Test set BCE loss 0.212678000330925 Custom Loss 0.212678000330925 with ber  0.07478198409080505
+====> Epoch: 5 Average loss: 0.21036906  running time 1636.3223342895508
+====> Epoch: 5 Average loss: 0.33588041  running time 1703.530597448349
+====> Epoch: 5 Average loss: 0.33552423  running time 1710.050885438919
+====> Epoch: 5 Average loss: 0.33563248  running time 1698.039890050888
+====> Epoch: 5 Average loss: 0.33483302  running time 1682.4043419361115
+====> Epoch: 5 Average loss: 0.33467607  running time 1721.9308724403381
+====> Epoch: 5 Average loss: 0.33255398  running time 1696.7344748973846
+====> Epoch: 5 Average loss: 0.33207313  running time 1674.507346868515
+====> Epoch: 5 Average loss: 0.33198706  running time 1806.1441810131073
+====> Epoch: 5 Average loss: 0.33153740  running time 1840.1854107379913
+====> Epoch: 5 Average loss: 0.33184347  running time 1874.322228193283
+====> Epoch: 5 Average loss: 0.33121528  running time 4761.885200738907
+====> Test set BCE loss 0.197403684258461 Custom Loss 0.197403684258461 with ber  0.06844320148229599
+====> Epoch: 6 Average loss: 0.19616360  running time 14527.631673574448
+====> Epoch: 6 Average loss: 0.32848869  running time 16522.781290769577
+====> Epoch: 6 Average loss: 0.32810512  running time 17382.831399679184
+====> Epoch: 6 Average loss: 0.32836853  running time 16846.8540391922
+====> Epoch: 6 Average loss: 0.32869898  running time 16828.784743070602
+====> Epoch: 6 Average loss: 0.32846840  running time 15960.534762382507
+====> Epoch: 6 Average loss: 0.32662078  running time 15376.61507344246
+====> Epoch: 6 Average loss: 0.32660816  running time 15053.326106071472
+====> Epoch: 6 Average loss: 0.32631234  running time 16672.03911471367
+====> Epoch: 6 Average loss: 0.32677848  running time 2009.3094193935394
+====> Epoch: 6 Average loss: 0.32657288  running time 2102.177206516266
+====> Epoch: 6 Average loss: 0.32598508  running time 2139.5585522651672
+====> Test set BCE loss 0.19196565449237823 Custom Loss 0.19196565449237823 with ber  0.06528519839048386
+====> Epoch: 7 Average loss: 0.19107514  running time 2134.9672904014587
+====> Epoch: 7 Average loss: 0.32538624  running time 2116.56579041481
+====> Epoch: 7 Average loss: 0.32547819  running time 2063.539349794388
+====> Epoch: 7 Average loss: 0.32470851  running time 2040.2436172962189
+====> Epoch: 7 Average loss: 0.32433661  running time 2035.3364572525024
+====> Epoch: 7 Average loss: 0.32504462  running time 2622.4325108528137
+====> Epoch: 7 Average loss: 0.32538817  running time 2033.993218421936
+====> Epoch: 7 Average loss: 0.32500557  running time 2052.1757431030273
+====> Epoch: 7 Average loss: 0.32506768  running time 2104.9514372348785
+====> Epoch: 7 Average loss: 0.32533180  running time 2047.5439655780792
+====> Epoch: 7 Average loss: 0.32507597  running time 2033.5954468250275
+====> Epoch: 7 Average loss: 0.32500755  running time 2032.64399600029
+====> Test set BCE loss 0.18935886025428772 Custom Loss 0.18935886025428772 with ber  0.0640990287065506
+====> Epoch: 8 Average loss: 0.18933432  running time 2621.150025844574
+====> Epoch: 8 Average loss: 0.32388650  running time 2035.9840710163116
+====> Epoch: 8 Average loss: 0.32354568  running time 2036.155476808548
+====> Epoch: 8 Average loss: 0.32335907  running time 2035.1725387573242
+====> Epoch: 8 Average loss: 0.32279109  running time 2032.9708075523376
+====> Epoch: 8 Average loss: 0.32339125  running time 2035.3644285202026
+====> Epoch: 8 Average loss: 0.32383028  running time 2032.4101309776306
+====> Epoch: 8 Average loss: 0.32274876  running time 2033.658411026001
+====> Epoch: 8 Average loss: 0.32262536  running time 2033.4345407485962
+====> Epoch: 8 Average loss: 0.32302743  running time 2618.803310394287
+====> Epoch: 8 Average loss: 0.32251723  running time 2029.2289628982544
+====> Epoch: 8 Average loss: 0.32253983  running time 2027.3920209407806
+====> Test set BCE loss 0.187629833817482 Custom Loss 0.187629833817482 with ber  0.06381301581859589
+====> Epoch: 9 Average loss: 0.18705386  running time 2025.9568479061127
+====> Epoch: 9 Average loss: 0.32233507  running time 2042.4123668670654
+====> Epoch: 9 Average loss: 0.32222882  running time 2030.2473764419556
+====> Epoch: 9 Average loss: 0.32229461  running time 2030.279392004013
+====> Epoch: 9 Average loss: 0.32236100  running time 2160.703220844269
+====> Epoch: 9 Average loss: 0.32169756  running time 2510.774950027466
+====> Epoch: 9 Average loss: 0.32173889  running time 2076.292377471924
+====> Epoch: 9 Average loss: 0.32145510  running time 2088.331516981125
+====> Epoch: 9 Average loss: 0.32205077  running time 2066.101739168167
+====> Epoch: 9 Average loss: 0.32102420  running time 2048.1200795173645
+====> Epoch: 9 Average loss: 0.32128927  running time 2095.2472813129425
+====> Epoch: 9 Average loss: 0.32134079  running time 2118.172796010971
+====> Test set BCE loss 0.18397833406925201 Custom Loss 0.18397833406925201 with ber  0.06247578561306
+====> Epoch: 10 Average loss: 0.18371574  running time 1668.747178554535
+====> Epoch: 10 Average loss: 0.32047941  running time 2065.5708332061768
+====> Epoch: 10 Average loss: 0.32085378  running time 2066.247636318207
+====> Epoch: 10 Average loss: 0.32031484  running time 2027.7198326587677
+====> Epoch: 10 Average loss: 0.32086364  running time 2058.54815864563
+====> Epoch: 10 Average loss: 0.31998084  running time 2048.3019757270813
+====> Epoch: 10 Average loss: 0.32157908  running time 2070.692654132843
+====> Epoch: 10 Average loss: 0.32038324  running time 2028.1046106815338
+====> Epoch: 10 Average loss: 0.32005313  running time 2025.7900733947754
+====> Epoch: 10 Average loss: 0.32037276  running time 3529.410983324051
+====> Epoch: 10 Average loss: 0.32005293  running time 3770.863957643509
+====> Epoch: 10 Average loss: 0.31990235  running time 3551.778971195221
+====> Test set BCE loss 0.1789952516555786 Custom Loss 0.1789952516555786 with ber  0.061629198491573334
+====> Epoch: 11 Average loss: 0.17914098  running time 3416.0270500183105
+====> Epoch: 11 Average loss: 0.31988687  running time 3404.079912185669
+====> Epoch: 11 Average loss: 0.31942883  running time 3411.0798790454865
+====> Epoch: 11 Average loss: 0.31913911  running time 3485.036273241043
+====> Epoch: 11 Average loss: 0.31899500  running time 3397.734568119049
+====> Epoch: 11 Average loss: 0.31919255  running time 3405.0613470077515
+====> Epoch: 11 Average loss: 0.31972262  running time 3384.58114528656
+====> Epoch: 11 Average loss: 0.31912453  running time 3360.166210412979
+====> Epoch: 11 Average loss: 0.31908643  running time 3380.99671626091
+====> Epoch: 11 Average loss: 0.31829633  running time 3419.6213557720184
+====> Epoch: 11 Average loss: 0.31831595  running time 3456.131324529648
+====> Epoch: 11 Average loss: 0.31890951  running time 3535.331298828125
+====> Test set BCE loss 0.18135853111743927 Custom Loss 0.18135853111743927 with ber  0.06188559904694557
+====> Epoch: 12 Average loss: 0.18092950  running time 3699.57048535347
+====> Epoch: 12 Average loss: 0.32020276  running time 3693.5144035816193
+====> Epoch: 12 Average loss: 0.31901127  running time 3690.381493806839
+====> Epoch: 12 Average loss: 0.31956790  running time 3855.1127898693085
+====> Epoch: 12 Average loss: 0.31937446  running time 4266.540589332581
+====> Epoch: 12 Average loss: 0.31920433  running time 4209.622553825378
+====> Epoch: 12 Average loss: 0.31864286  running time 3919.3833558559418
+====> Epoch: 12 Average loss: 0.31783653  running time 3940.6884772777557
+====> Epoch: 12 Average loss: 0.31813513  running time 4196.645950555801
+====> Epoch: 12 Average loss: 0.31859334  running time 4374.67963719368
+====> Epoch: 12 Average loss: 0.31836533  running time 4832.207619905472
+====> Epoch: 12 Average loss: 0.31816990  running time 4036.8316011428833
+====> Test set BCE loss 0.18049266934394836 Custom Loss 0.18049266934394836 with ber  0.06189659237861633
+====> Epoch: 13 Average loss: 0.18042313  running time 4055.4507699012756
+====> Epoch: 13 Average loss: 0.31819189  running time 4103.5359563827515
+====> Epoch: 13 Average loss: 0.31837346  running time 4140.162854671478
+====> Epoch: 13 Average loss: 0.31859194  running time 4176.269054412842
+====> Epoch: 13 Average loss: 0.31805276  running time 4169.357036828995
+====> Epoch: 13 Average loss: 0.31761711  running time 4202.827919483185
+====> Epoch: 13 Average loss: 0.31817227  running time 4231.29035615921
+====> Epoch: 13 Average loss: 0.31741869  running time 4326.045768499374
+====> Epoch: 13 Average loss: 0.31727085  running time 4481.232927083969
+====> Epoch: 13 Average loss: 0.31730035  running time 4390.092776298523
+====> Epoch: 13 Average loss: 0.31781967  running time 4359.507270812988
+====> Epoch: 13 Average loss: 0.31799064  running time 4426.450761318207
+====> Test set BCE loss 0.18023157119750977 Custom Loss 0.18023157119750977 with ber  0.061802204698324203
+====> Epoch: 14 Average loss: 0.18035121  running time 4875.049571752548
+====> Epoch: 14 Average loss: 0.31717412  running time 4796.785031795502
+====> Epoch: 14 Average loss: 0.31727459  running time 4603.400983810425
+====> Epoch: 14 Average loss: 0.31691297  running time 4743.750472068787
+====> Epoch: 14 Average loss: 0.31691939  running time 4811.128174543381
+====> Epoch: 14 Average loss: 0.31612819  running time 4850.358758211136
+====> Epoch: 14 Average loss: 0.31713215  running time 4915.2234427928925
+====> Epoch: 14 Average loss: 0.31699084  running time 5018.924953699112
+====> Epoch: 14 Average loss: 0.31695843  running time 5121.787341833115
+====> Epoch: 14 Average loss: 0.31686327  running time 5222.081563234329
+====> Epoch: 14 Average loss: 0.31758427  running time 5356.314231157303
+====> Epoch: 14 Average loss: 0.31689159  running time 5429.3861348629
+====> Test set BCE loss 0.17941351234912872 Custom Loss 0.17941351234912872 with ber  0.061965398490428925
+====> Epoch: 15 Average loss: 0.17893093  running time 5727.169007539749
+====> Epoch: 15 Average loss: 0.31605778  running time 5976.800895452499
+====> Epoch: 15 Average loss: 0.31607648  running time 5948.111570358276
+====> Epoch: 15 Average loss: 0.31674349  running time 6115.422710418701
+====> Epoch: 15 Average loss: 0.31648469  running time 6715.216190814972
+====> Epoch: 15 Average loss: 0.31693013  running time 6278.550457000732
+====> Epoch: 15 Average loss: 0.31664713  running time 6327.6446487903595
+====> Epoch: 15 Average loss: 0.31591559  running time 6497.50489282608
+====> Epoch: 15 Average loss: 0.31636545  running time 6642.48327088356
+====> Epoch: 15 Average loss: 0.31640976  running time 6736.701991558075
+====> Epoch: 15 Average loss: 0.31664456  running time 6861.852275848389
+====> Epoch: 15 Average loss: 0.31680835  running time 6958.372287511826
+====> Test set BCE loss 0.1807030737400055 Custom Loss 0.1807030737400055 with ber  0.06232660263776779
+====> Epoch: 16 Average loss: 0.18066665  running time 7225.951807022095
+====> Epoch: 16 Average loss: 0.31627577  running time 7773.016209363937

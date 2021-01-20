@@ -46,7 +46,8 @@ def get_args():
                                                'ge_awgn',          # Non-IID, stateful channel.
                                                'bec', 'bsc',       # Binary Channels
                                                'ge',               # Binary Non-IID stateful Channel
-                                               'fading'            # Non-coherent Rayleigh Fading AWGN Channel
+                                               'fading',            # Non-coherent Rayleigh Fading AWGN Channel
+                                               "its" # HF ITS noise 
                                                ],
                         default = 'awgn')
     # Channel parameters

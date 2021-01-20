@@ -147,10 +147,10 @@ if __name__ == '__main__':
         decoder = DEC(args, p_array1)
 
     # choose support channels
-    from channel_ae import Channel_AE
-    model = Channel_AE(args, encoder, decoder).to(device)
-
-    # model = Channel_ModAE(args, encoder, decoder).to(device)
+    # from channel_ae import Channel_AE
+    # model = Channel_AE(args, encoder, decoder).to(device)
+    from channel_ae import Channel_ModAE
+    model = Channel_ModAE(args, encoder, decoder).to(device)
 
 
     # make the model parallel
@@ -163,7 +163,7 @@ if __name__ == '__main__':
         pass
 
     else:
-        pretrained_model = torch.load(args.init_nw_weight)
+        pretrained_model = torch.load(args.init_nw_weight,map_location=torch.device('cpu'))
 
         try:
             model.load_state_dict(pretrained_model.state_dict(), strict = False)
@@ -235,7 +235,6 @@ if __name__ == '__main__':
         this_loss, this_ber  = validate(model, general_optimizer, args, use_cuda = use_cuda)
         report_loss.append(this_loss)
         report_ber.append(this_ber)
-
     if args.print_test_traj == True:
         print('test loss trajectory', report_loss)
         print('test ber trajectory', report_ber)
@@ -248,7 +247,9 @@ if __name__ == '__main__':
     torch.save(model.state_dict(), './tmp/torch_model_'+identity+'.pt')
     print('saved model', './tmp/torch_model_'+identity+'.pt')
 
+
     if args.is_variable_block_len:
+        # 测试时，选择是否改变编码块的长度
         print('testing block length',args.block_len_low )
         test(model, args, block_len=args.block_len_low, use_cuda = use_cuda)
         print('testing block length',args.block_len )

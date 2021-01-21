@@ -147,10 +147,10 @@ if __name__ == '__main__':
         decoder = DEC(args, p_array1)
 
     # choose support channels
-    # from channel_ae import Channel_AE
-    # model = Channel_AE(args, encoder, decoder).to(device)
-    from channel_ae import Channel_ModAE
-    model = Channel_ModAE(args, encoder, decoder).to(device)
+    from channel_ae import Channel_AE
+    model = Channel_AE(args, encoder, decoder).to(device)
+    # from channel_ae import Channel_ModAE
+    # model = Channel_ModAE(args, encoder, decoder).to(device)
 
 
     # make the model parallel

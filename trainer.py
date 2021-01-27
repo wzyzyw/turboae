@@ -53,7 +53,6 @@ def train(epoch, model, optimizer, args, use_cuda = False, verbose = True, mode 
             X_train    = torch.randint(0, 2, (args.batch_size, block_len, args.code_rate_k), dtype=torch.float)
 
         noise_shape = (args.batch_size, args.block_len, args.code_rate_n)
-        print("noise gene!!!")
         # train encoder/decoder with different SNR... seems to be a good practice.
         if mode == 'encoder':
             fwd_noise  = generate_noise(noise_shape, args, snr_low=args.train_enc_channel_low, snr_high=args.train_enc_channel_high, mode = 'encoder')

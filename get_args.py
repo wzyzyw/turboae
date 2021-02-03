@@ -21,7 +21,7 @@ def get_args():
                                              'Turbo_rate3_lte',        # Turbo Code, rate 1/3, LTE.
                                              'turboae_2int', # experimental, use multiple interleavers
                                             ],
-                        default='TurboAE_rate3_cnn2d')
+                        default='Turbo_rate3_lte')
 
     parser.add_argument('-decoder', choices=['TurboAE_rate3_rnn',      # TurboAE Decoder, rate 1/3
                                              'TurboAE_rate3_cnn',      # TurboAE Decoder, rate 1/3, Same Shape 1D CNN Decoder

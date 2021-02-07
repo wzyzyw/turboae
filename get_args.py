@@ -47,7 +47,8 @@ def get_args():
                                                'bec', 'bsc',       # Binary Channels
                                                'ge',               # Binary Non-IID stateful Channel
                                                'fading',            # Non-coherent Rayleigh Fading AWGN Channel
-                                               "its" # HF ITS noise 
+                                               "its", # HF ITS noise ,,
+                                               "bikappa",# HF bikappa noise
                                                ],
                         default = 'awgn')
     # Channel parameters

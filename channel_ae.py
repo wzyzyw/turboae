@@ -39,7 +39,8 @@ class Channel_AE(torch.nn.Module):
         codes  = self.enc(input)
 
         # Setup channel mode:
-        if self.args.channel in ['awgn', 't-dist', 'radar', 'ge_awgn']:
+        if self.args.channel in ['awgn', 't-dist', 'radar', 'ge_awgn','bikappa']:
+            # print("noise_type:",self.args.channel)
             received_codes = codes + fwd_noise
 
         elif self.args.channel == 'bec':
@@ -62,7 +63,7 @@ class Channel_AE(torch.nn.Module):
             # # corrupted_signal = 2.0*fading_h*input_signal-1.0 + noise
             # corrupted_signal = fading_h *(2.0*input_signal-1.0) + noise
         else:
-            print('default AWGN and ITS channel')
+            print('default AWGN channel')
             received_codes = codes + fwd_noise
 
         if self.args.rec_quantize:

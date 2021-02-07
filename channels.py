@@ -3,8 +3,9 @@ __author__ = 'yihanjiang'
 import torch
 from utils import snr_db2sigma, snr_sigma2db
 import numpy as np
-from noise import itsnoise
+from noise import bikappa
 from torch.autograd import Variable
+bikappaobj=bikappa()
 def generate_noise(noise_shape, args, test_sigma = 'default', snr_low = 0.0, snr_high = 0.0, mode = 'encoder'):
     # SNRs at training
     # print("enter genenoise",test_sigma,args.channel)
@@ -110,25 +111,10 @@ def generate_noise(noise_shape, args, test_sigma = 'default', snr_low = 0.0, snr
                         print('bad!!! something happens')
 
         fwd_noise = torch.from_numpy(fwd_noise).type(torch.FloatTensor)
-    elif args.channel == 'its':
-        print("***its noise***")
-        sps=1
-        bandwidth=250e3
-        roll_off=0.25
-        baud_rate=bandwidth/(1+roll_off)
-        sample_rate=baud_rate/sps
-        sample_interval=1/sample_rate
-        params={
-            "sps":sps,
-            "bandwidth":bandwidth,
-            "roll_off":roll_off,
-            "baud_rate":baud_rate,
-            "sample_rate":sample_rate,
-            "sample_interval":sample_interval
-        }
-        hnum=noise_shape[0]*noise_shape[1]*noise_shape[2]
-        noiseobj=itsnoise(params,hnum)
-        fwd_noise=this_sigma * torch.randn(noise_shape, dtype=torch.float)+Variable(torch.Tensor(noiseobj.addnoise(this_sigma**2)).type(torch.FloatTensor)).view(noise_shape[0],noise_shape[1],noise_shape[2])
+    elif args.channel == 'bikappa':
+        noise_num=noise_shape[0]*noise_shape[1]*noise_shape[2]
+        tmp=bikappaobj.getbikappa((noise_num,1))
+        fwd_noise=this_sigma *Variable(torch.Tensor(tmp).type(torch.FloatTensor)).view(noise_shape[0],noise_shape[1],noise_shape[2])
     else:
         # Unspecific channel, use AWGN channel.
         fwd_noise  = this_sigma * torch.randn(noise_shape, dtype=torch.float)

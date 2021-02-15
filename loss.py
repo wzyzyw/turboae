@@ -43,7 +43,9 @@ def customized_loss(output, X_train, args, size_average = True, noise = None, co
         output = torch.clamp(output, 0.0, 1.0)
         loss = torch.mean(((1.0 - output)**X_train )* ((output) ** (1.0-X_train)))
         #print(loss)
-
+    elif args.loss=='energyloss':
+        output = torch.clamp(output, 0.0, 1.0)
+        loss=torch.mean((1.0-2*output)*(-1)**X_train)
     elif args.loss == 'bce_rl':
         output = torch.clamp(output, 0.0, 1.0)
 

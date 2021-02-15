@@ -231,7 +231,9 @@ if __name__ == '__main__':
             if args.num_train_dec > 0:
                 for idx in range(args.num_train_dec):
                     train(epoch, model, dec_optimizer, args, use_cuda = use_cuda, mode ='decoder')
-
+        if epoch%10==0:
+            torch.save(model.dec.state_dict(), './tmp/torch_model_decoder_'+identity+'_'+str(epoch)+'.pt')
+            print('saved model', './tmp/torch_model_decoder_'+identity+'_'+str(epoch)+'.pt')
         this_loss, this_ber  = validate(model, general_optimizer, args, use_cuda = use_cuda)
         report_loss.append(this_loss)
         report_ber.append(this_ber)
@@ -246,6 +248,8 @@ if __name__ == '__main__':
 
     torch.save(model.state_dict(), './tmp/torch_model_'+identity+'.pt')
     print('saved model', './tmp/torch_model_'+identity+'.pt')
+    torch.save(model.dec.state_dict(), './tmp/torch_model_decoder_'+identity+'.pt')
+    print('saved model', './tmp/torch_model_decoder_'+identity+'.pt')
 
 
     if args.is_variable_block_len:

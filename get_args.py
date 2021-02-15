@@ -36,7 +36,7 @@ def get_args():
                                              'rate3_cnn2d',
                                              'turboae_2int', # experimental, use multiple interleavers
                                             ],
-                        default='TurboAE_rate3_cnn2d')
+                        default='TurboAE_rate3_cnn')
     ################################################################
     # Channel related parameters
     ################################################################

@@ -767,7 +767,15 @@ class ENC_TurboCode(ENCBase):
         turbo_code_now = 2.0*turbo_enc(inputs, self.args, self.p_array) - 1.0
         turbo_code = turbo_code_now.to(self.this_device)
         return turbo_code
-
+class ENC_TurboCode2():
+    def __init__(self,args,p_array):
+        self.p_array=p_array
+    def set_interleaver(self, p_array):
+        self.p_array = p_array
+    def encode(self,input):
+        turbo_code_now = 2.0*turbo_enc(inputs, self.args, self.p_array) - 1.0
+        turbo_code = turbo_code_now.to(self.this_device)
+        return turbo_code
 import commpy.channelcoding.turbo as turbo
 import commpy.channelcoding.convcode as cc
 import commpy.channelcoding.interleavers as RandInterlv

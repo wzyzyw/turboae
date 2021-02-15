@@ -37,7 +37,6 @@ class Channel_AE(torch.nn.Module):
             self.dec.set_interleaver(p_array)
 
         codes  = self.enc(input)
-
         # Setup channel mode:
         if self.args.channel in ['awgn', 't-dist', 'radar', 'ge_awgn','bikappa']:
             # print("noise_type:",self.args.channel)
